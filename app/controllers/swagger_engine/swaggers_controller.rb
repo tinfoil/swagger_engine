@@ -12,11 +12,11 @@ module SwaggerEngine
 
     def show
       respond_to do |format|
-        format.html { 
+        format.html {
           @swagger_json_url = swagger_path(params[:id], format: :json)
         }
-        format.json { 
-          send_file @json_files[params[:id].to_sym], type: 'application/json', disposition: 'inline'
+        format.json {
+          render file: @json_files[params[:id].to_sym]
         }
       end
     end

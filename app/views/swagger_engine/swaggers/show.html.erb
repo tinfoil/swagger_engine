@@ -2,15 +2,12 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Swagger UI</title>
-  <%#= favicon_link_tag 'favicon-32x32.png', rel: 'icon', type: 'image/png', sizes: '32x32' %>
-  <%#= favicon_link_tag 'favicon-16x16.png', rel: 'icon', type: 'image/png', sizes: '16x16' %>
+  <title>Tinfoil Security - API Specification</title>
 
   <%= stylesheet_link_tag "swagger_engine/application" %>
   <%= stylesheet_link_tag "swagger_engine/reset", media: "print" %>
   <%= stylesheet_link_tag "swagger_engine/print", media: "print" %>
   <%= javascript_include_tag "swagger_engine/application" %>
-  <%= csrf_meta_tags %>
 
   <script type="text/javascript">
     $(function () {
@@ -18,7 +15,7 @@
       if (url && url.length > 1) {
         url = decodeURIComponent(url[1]);
       } else {
-        url = '<%= @swagger_json_url %>';
+        url = "<%= @swagger_json_url %>";
       }
 
       // Pre load translate...
@@ -33,10 +30,11 @@
           if(typeof initOAuth == "function") {
             initOAuth({
               clientId: "your-client-id",
-              clientSecret: "your-client-secret",
+              clientSecret: "your-client-secret-if-required",
               realm: "your-realms",
-              appName: "your-app-name", 
-              scopeSeparator: ","
+              appName: "your-app-name",
+              scopeSeparator: ",",
+              additionalQueryStringParams: {}
             });
           }
 
@@ -44,30 +42,31 @@
             window.SwaggerTranslator.translate();
           }
 
-          $('pre code').each(function(i, e) {
-            hljs.highlightBlock(e)
-          });
-
           addApiKeyAuthorization();
         },
         onFailure: function(data) {
           log("Unable to Load SwaggerUI");
         },
-        docExpansion: "none",
+        docExpansion: "list",
+        jsonEditor: false,
         apisSorter: "alpha",
+        defaultModelRendering: 'schema',
         showRequestHeaders: false
       });
 
       function addApiKeyAuthorization(){
-        var key = encodeURIComponent($('#input_apiKey')[0].value);
-        if(key && key.trim() != "") {
-            var apiKeyAuth = new SwaggerClient.ApiKeyAuthorization("api_key", key, "query");
-            window.swaggerUi.api.clientAuthorizations.add("api_key", apiKeyAuth);
-            log("added key " + key);
+        var access_key = encodeURIComponent($('#input_access_key')[0].value);
+        var secret_key = encodeURIComponent($('#input_secret_key')[0].value);
+        if(access_key && access_key.trim() != "" &&
+           secret_key && secret_key.trim() != "") {
+          authorization_header = "Token token=" + secret_key + ", access_key=" + access_key
+          window.swaggerUi.api.clientAuthorizations.add("Authorization", new SwaggerClient.ApiKeyAuthorization("Authorization", authorization_header, "header"));
+          log("added key " + authorization_header);
         }
       }
 
-      $('#input_apiKey').change(addApiKeyAuthorization);
+      $('#input_access_key').change(addApiKeyAuthorization);
+      $('#input_secret_key').change(addApiKeyAuthorization);
 
       // if you have an apiKey you would like to pre-populate on the page for demonstration purposes...
       /*
@@ -89,10 +88,11 @@
 <body class="swagger-section">
 <div id='header'>
   <div class="swagger-ui-wrap">
-    <a id="logo" href="http://swagger.io">swagger</a>
+    <a id="logo" href="http://tinfoilsecurity.com">Tinfoil Security</a>
     <form id='api_selector'>
+      <div class='input'><input placeholder="Access Key" id="input_access_key" name="access_key" type="text"/></div>
+      <div class='input'><input placeholder="Secret Key" id="input_secret_key" name="secret_key" type="text"/></div>
       <div class='input'><input placeholder="http://example.com/api" id="input_baseUrl" name="baseUrl" type="text"/></div>
-      <div class='input'><input placeholder="api_key" id="input_apiKey" name="apiKey" type="text"/></div>
       <div class='input'><a id="explore" href="#" data-sw-translate>Explore</a></div>
     </form>
   </div>
