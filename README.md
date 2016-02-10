@@ -67,6 +67,15 @@ end
 
 Use [Swagger editor](https://github.com/swagger-api/swagger-editor).
 
+## Contributing
+
+### How to update swagger-ui
+Most of the files in `swagger-ui/dist/` now live in `app/assets` and `app/views`. A few changes have been made to accomodate the Rails asset pipeline:
+
+* Styles need `url()` to be changed to `image-url()` or `font-url()` in order to receive the correct path under the Rails asset pipeline.
+
+* `index.html` has been renamed to `index.html.erb` and modified to use the Rails asset pipeline. Stylesheets and Javascript has been combined under `application.js` and `application.scss`.
+
 ## License
 
 This project rocks and uses MIT-LICENSE.
