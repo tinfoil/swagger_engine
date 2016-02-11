@@ -74,6 +74,8 @@ Most of the files in `swagger-ui/dist/` now live in `app/assets` and `app/views`
 
 * Styles need `url()` to be changed to `image-url()` or `font-url()` in order to receive the correct path under the Rails asset pipeline.
 
+* `print.css`, `screen.css`, and `typography.css` have been renamed to `*.scss`.
+
 * `index.html` has been renamed to `index.html.erb` and modified to use the Rails asset pipeline. Stylesheets and Javascript has been combined under `application.js` and `application.scss`.
 
 ## License
